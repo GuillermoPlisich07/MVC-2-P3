@@ -5,5 +5,6 @@
         public int anio { get; set; }
         public string tipo { get; set; }
         public int cantMovidas { get; set; }
+       
     }
 }

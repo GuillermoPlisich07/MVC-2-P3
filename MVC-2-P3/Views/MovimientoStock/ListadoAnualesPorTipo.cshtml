@@ -6,7 +6,29 @@
 
 <h1>Listado Anual Por Tipo</h1>
 
-<table class="table">
+@{
+    // Agrupar los datos por año
+    var groupedByYear = Model.GroupBy(x => x.anio);
+}
+
+@foreach (var group in groupedByYear)
+{
+    <div style="margin-bottom: 20px;">
+        <strong>Año: @group.Key</strong>
+        @foreach (var item in group)
+        {
+            <ul>
+                <li>Tipo: @item.tipo</li>
+                <li>Cantidad Movidas: @item.cantMovidas</li>
+            </ul>
+        }
+              <ul>
+            <li>Cantidad Movidas Totales: @group.Sum(x => x.cantMovidas)</li>
+             </ul>
+    </div>
+}
+
+@* <table class="table">
     <thead>
         <tr>
             <th>
@@ -36,4 +58,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table> *@
