@@ -69,7 +69,8 @@ namespace MVC_2_P3.Controllers
                 DTOMovimientoStockCreate vista = new DTOMovimientoStockCreate()
                 {
                     articulos = art,
-                    tipos = tip
+                    tipos = tip,
+                    email = HttpContext.Session.GetString("Email")
                 };
 
                 return View(vista);
@@ -94,6 +95,16 @@ namespace MVC_2_P3.Controllers
             }
             try
             {
+                DTOMovimientoStockPost nuevo = new DTOMovimientoStockPost()
+                {
+                    id = 0,
+                    idArticulo = movStock.idArticulo,
+                    idMovimientoTipo = movStock.idMovimientoTipo,
+                    email = movStock.email,
+                    cantidadMovidas = movStock.cantidadMovidas
+                };
+
+
                 //Pregunto el Token que esta cargado en el session
                 var token = HttpContext.Session.GetString("Token");
 
@@ -106,13 +117,14 @@ namespace MVC_2_P3.Controllers
                 //Inserto el token al Autorizacion para la consulta
                 _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
 
-                var json = JsonSerializer.Serialize(movStock);
+                var json = JsonSerializer.Serialize(nuevo);
+
                 var body = new StringContent(json, Encoding.UTF8, "application/json");
-                var respuesta = _httpClient.PostAsync("Usuario/Login", body).Result;
+                var respuesta = _httpClient.PostAsync("MovimientoStock", body).Result;
 
                 if (respuesta.IsSuccessStatusCode)
                 {
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Create");
                 }
                 else
                 {
@@ -126,6 +138,23 @@ namespace MVC_2_P3.Controllers
                 return View();
             }
         }
+
+        // GET: MovimientoStockController/ListadoArticuloRangoPorFecha
+        public ActionResult ListadoArticuloRangoPorFecha()
+        {
+            List<DTOMovimientoStock> temas = null;
+            return View(temas);
+        }
+
+        // POST: MovimientoStockController/ListadoArticuloRangoPorFecha
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListadoArticuloRangoPorFecha()
+        {
+
+        }
+
+
 
         private void SetError(HttpResponseMessage respuesta)
         {

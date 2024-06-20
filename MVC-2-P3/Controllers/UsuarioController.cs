@@ -77,7 +77,7 @@ namespace MVC_2_P3.Controllers
             HttpContext.Session.Remove("Rol");
             HttpContext.Session.Remove("Email");
             _httpClient.DefaultRequestHeaders.Remove("Authorization");
-            return RedirectToAction("Autorizar", "Login");
+            return RedirectToAction("Usuario", "Login");
         }
 
         private void SetError(HttpResponseMessage respuesta)
