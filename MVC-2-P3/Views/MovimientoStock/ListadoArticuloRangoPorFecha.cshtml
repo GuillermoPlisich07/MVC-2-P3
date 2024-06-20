@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "ListadoArticuloRangoPorFecha";
 }
-
+     
 <h1>Listado Articulos por rango de fecha</h1>
 <div class="row">
     <div class="col-md-4">
@@ -11,18 +11,18 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label form="inicio">Fecha Inicio: </label>
-                <input type="datetime" name="inicio">
+                <input type="date" name="inicio">
             </div>
             <br />
             <div class="form-group">
                 <label form="final">Fecha Final: </label>
-                <input type="datetime" name="final">
+                <input type="date" name="final">
             </div>
             <br />
             <div class="form-group">
-                <label for="idArticulos" class="control-label">Articulos: </label>
-                <select for="idArticulos" class="form-control" multiple>
-                    <option value="">Seleccione un Articulo o varios</option>
+                <label form="idArticulos" class="control-label">Articulos: </label>
+                <select form="idArticulos" class="form-control" multiple>
+                    <option value="">Seleccione un Articulo o varios:</option>
                     @if (Model.articulos != null)
                     {
                         @foreach (var articulo in Model.articulos)
@@ -30,10 +30,9 @@
                             <option value="@articulo.id">@articulo.nombre</option>
                         }
                     }
-                    <span validation-for="idArticulos" class="text-danger"></span>
                 </select>
+                <span validation-for="idArticulos" class="text-danger"></span>
             </div>
-
             <br />
             <div class="form-group">
                 <input type="submit" value="Buscar" class="btn btn-primary" />
@@ -41,6 +40,7 @@
         </form>
     </div>
 </div>
+
 
 <br />
 

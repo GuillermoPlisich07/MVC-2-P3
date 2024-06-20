@@ -21,26 +21,26 @@
                     </button>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <li class="nav-item" style="margin-right: 10px;">
+                                <a class="nav-link btn btn-success text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                             </li>
                             @if (Context.Session.GetString("Rol") == "Encargado")
                             {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="MovimientoStock" asp-action="Create">Crear Movimiento Stock</a>
+                                <li class="nav-item" style="margin-right: 10px;">
+                                    <a class="nav-link btn btn-success text-white" asp-area="" asp-controller="MovimientoStock" asp-action="Create">Crear Movimiento Stock</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="MovimientoStock" asp-action="ListadoArticuloRangoPorFecha">Listado Rango Fecha</a>
+                                <li class="nav-item" style="margin-right: 10px;">
+                                    <a class="nav-link btn btn-success text-white" asp-area="" asp-controller="MovimientoStock" asp-action="ListadoArticuloRangoPorFecha">Listado Rango Fecha</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="MovimientoStock" asp-action="ListadoArticuloTipoDescendente">Listado Articulo-Tipo</a>
+                                <li class="nav-item" style="margin-right: 10px;">
+                                    <a class="nav-link btn btn-success text-white" asp-area="" asp-controller="MovimientoStock" asp-action="ListadoArticuloTipoDescendente">Listado Articulo-Tipo</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="MovimientoStock" asp-action="ListadoAnualesPorTipo">Listado Anual por Tipo</a>
+                                <li class="nav-item" style="margin-right: 10px;">
+                                    <a class="nav-link btn btn-success text-white" asp-area="" asp-controller="MovimientoStock" asp-action="ListadoAnualesPorTipo">Listado Anual por Tipo</a>
                                 </li>
                             }
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuario" asp-action="Logout">Logout</a>
+                            <li class="nav-item" style="margin-right: 10px;">
+                                <a class="nav-link btn btn-danger text-white" asp-area="" asp-controller="Usuario" asp-action="Logout">Logout</a>
                             </li>
                             
                         </ul>
