@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using MVC_2_P3.DTOs;
 using Newtonsoft.Json.Linq;
@@ -162,7 +163,21 @@ namespace MVC_2_P3.Controllers
                     pagina = 1;
                     //Inserto el token al Autorizacion para la consulta
                     _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
-                    var response1 = _httpClient.GetAsync($"MovimientoStock/ListadoArticuloRangoPorFecha/{inicio}/{final}/{idArticulos}/{pagina}").Result;
+                    // Construir la URL con parámetros de consulta
+                    var queryParams = new Dictionary<string, string>
+                    {
+                        { "inicio", inicio.ToString("o") },
+                        { "final", final.ToString("o") },
+                        { "pagina", pagina.ToString() }
+                    };
+                    foreach (var id in idArticulos)
+                    {
+                        queryParams.Add("idArticulos", id.ToString());
+                    }
+
+                    var url = QueryHelpers.AddQueryString("MovimientoStock/ListadoArticuloRangoPorFecha", queryParams);
+
+                    var response1 = _httpClient.GetAsync(url).Result;
 
                     // Opcional: Loguear el contenido de la respuesta para depuración
                     var responseContent = response1.Content.ReadAsStringAsync().Result;
