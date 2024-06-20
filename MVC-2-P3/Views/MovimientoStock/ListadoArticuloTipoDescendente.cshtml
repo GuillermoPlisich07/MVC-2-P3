@@ -7,11 +7,11 @@
 <h1>Listado por articulo y tipo de movimiento</h1>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="ListadoArticuloTipoDescendente">
+        <form asp-action="ListadoArticuloTipoDescendente" method="get">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label for="idArticulos" class="control-label">Articulos: </label>
-                <select for="idArticulos" class="form-control">
+                <select for="idArticulos" class="form-control" name="idArticulo">
                     <option value="">Seleccione un Articulo o varios</option>
                     @if (Model.articulos != null)
                     {
@@ -25,7 +25,7 @@
             </div>
             <div class="form-group">
                 <label for="idTipo" class="control-label">Tipo de movimiento: </label>
-                <select for="idTipo" class="form-control">
+                <select for="idTipo" class="form-control" name="idTipo">
                     <option value="">Seleccione un tipo de movimiento</option>
                     @if (Model.tipos != null)
                     {
@@ -37,7 +37,7 @@
                     <span validation-for="idTipo" class="text-danger"></span>
                 </select>
             </div>
-
+            <input type="hidden" name="pagina" value="@Model.pagina" />
             <br />
             <div class="form-group">
                 <input type="submit" value="Buscar" class="btn btn-primary" />
@@ -87,8 +87,23 @@
             }
         </tbody>
     </table>
+    <div class="d-flex justify-content-between">
+        @if (Model.movimientos.Any())
+        {
+            <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloTipoDescendente" asp-route-idArticulo="@Model.idArticulo" asp-route-idTipo="@Model.idTipo" asp-route-pagina="@(Model.pagina + 1)">Siguiente</a>
+        }
+    </div>
+
 }
 else
 {
-    <h3>No hay datos disponibles</h3>
+    <div class="alert alert-info">
+        <p>No hay movimientos para mostrar</p>
+        @if (Model.idTipo!=null && Model.idArticulo!=null)
+        {
+            <p>
+                <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloTipoDescendente" asp-route-idArticulo="@Model.idArticulo" asp-route-idTipo="@Model.idTipo" asp-route-pagina="1">Volver al primero</a>
+            </p>
+        }
+    </div>
 }

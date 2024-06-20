@@ -26,7 +26,6 @@ namespace MVC_2_P3.Controllers
 
 
 
-
         // GET: MovimientoStockController/Create
         public ActionResult Create()
         {
@@ -139,6 +138,9 @@ namespace MVC_2_P3.Controllers
             }
         }
 
+
+
+
         // GET: MovimientoStockController/ListadoArticuloRangoPorFecha
         public ActionResult ListadoArticuloRangoPorFecha()
         {
@@ -181,60 +183,151 @@ namespace MVC_2_P3.Controllers
         }
 
 
+
+
+
         // GET: MovimientoStockController/ListadoArticuloTipoDescendente
-        public ActionResult ListadoArticuloTipoDescendente()
-        {
-            var response1 = _httpClient.GetAsync("Articulo").Result;
-            var response2 = _httpClient.GetAsync("MovimientoTipo").Result;
+        //public ActionResult ListadoArticuloTipoDescendente()
+        //{
+        //    var response1 = _httpClient.GetAsync("Articulo").Result;
+        //    var response2 = _httpClient.GetAsync("MovimientoTipo").Result;
 
-            if (response1.StatusCode == System.Net.HttpStatusCode.Unauthorized || response2.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            {
-                return RedirectToAction("Usuario", "Login");
-            }
+        //    if (response1.StatusCode == System.Net.HttpStatusCode.Unauthorized || response2.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+        //    {
+        //        return RedirectToAction("Usuario", "Login");
+        //    }
 
-            List<DTOArticulo> art = null;
-            if (response1.IsSuccessStatusCode)
-            {
-                var content1 = response1.Content.ReadAsStringAsync().Result;
-                if (string.IsNullOrEmpty(content1))
-                {
-                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-                    return View();
-                }
-                art = JsonSerializer.Deserialize<List<DTOArticulo>>(content1, _jsonOptions);
+        //    List<DTOArticulo> art = null;
+        //    if (response1.IsSuccessStatusCode)
+        //    {
+        //        var content1 = response1.Content.ReadAsStringAsync().Result;
+        //        if (string.IsNullOrEmpty(content1))
+        //        {
+        //            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+        //            return View();
+        //        }
+        //        art = JsonSerializer.Deserialize<List<DTOArticulo>>(content1, _jsonOptions);
 
-            }
-            List<DTOMovimientoTipo> tip = null;
-            if (response2.IsSuccessStatusCode)
-            {
-                var content2 = response2.Content.ReadAsStringAsync().Result;
-                if (string.IsNullOrEmpty(content2))
-                {
-                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-                    return View();
-                }
-                tip = JsonSerializer.Deserialize<List<DTOMovimientoTipo>>(content2, _jsonOptions);
+        //    }
+        //    List<DTOMovimientoTipo> tip = null;
+        //    if (response2.IsSuccessStatusCode)
+        //    {
+        //        var content2 = response2.Content.ReadAsStringAsync().Result;
+        //        if (string.IsNullOrEmpty(content2))
+        //        {
+        //            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+        //            return View();
+        //        }
+        //        tip = JsonSerializer.Deserialize<List<DTOMovimientoTipo>>(content2, _jsonOptions);
 
-            }
+        //    }
 
-            List<DTOMovimientoStock> mov = null;
+        //    List<DTOMovimientoStock> mov = null;
 
-            DTOListadoArticuloRangoPorFecha nuevo = new DTOListadoArticuloRangoPorFecha()
-            {
-                movimientos = mov,
-                articulos = art,
-            };
-            return View(nuevo);
+        //    DTOListadoArticuloTipoDescendente nuevo = new DTOListadoArticuloTipoDescendente()
+        //    {
+        //        movimientos = mov,
+        //        articulos = art,
+        //        tipos = tip
+        //    };
+        //    return View(nuevo);
 
-        }
+        //}
 
         // POST: MovimientoStockController/ListadoArticuloTipoDescendente
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult ListadoArticuloTipoDescendente(int idArticulo, int idTipo, int pagina)
         {
-            return null;
+            if (idArticulo == null && idTipo == null && pagina == null)
+            {
+                idArticulo = 0;
+                idTipo = 0;
+                pagina = 0;
+            }
+            try
+            {
+                //Pregunto el Token que esta cargado en el session
+                var token = HttpContext.Session.GetString("Token");
+
+                //En el caso de que sea nulo, se tiene que loguear devuelta
+                if ((token == null))
+                {
+                    return RedirectToAction("Usuario", "Login");
+                }
+                List<DTOMovimientoStock> mov = null;
+                if (idArticulo != 0 && idTipo != 0)
+                {
+                    pagina = 1;
+                    //Inserto el token al Autorizacion para la consulta
+                    _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
+                    var response1 = _httpClient.GetAsync("MovimientoStock/ListadoArticuloTipoDescendente/" + idArticulo + "/" + idTipo + "/" + pagina).Result;
+
+                    
+                    if (response1.IsSuccessStatusCode)
+                    {
+                        var content1 = response1.Content.ReadAsStringAsync().Result;
+                        if (string.IsNullOrEmpty(content1))
+                        {
+                            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                            return View();
+                        }
+                        mov = JsonSerializer.Deserialize<List<DTOMovimientoStock>>(content1, _jsonOptions);
+
+                    }
+                }
+
+                var response2 = _httpClient.GetAsync("Articulo").Result;
+                var response3 = _httpClient.GetAsync("MovimientoTipo").Result;
+
+                if (response2.StatusCode == System.Net.HttpStatusCode.Unauthorized || response3.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Usuario", "Login");
+                }
+
+                List<DTOArticulo> art = null;
+                if (response2.IsSuccessStatusCode)
+                {
+                    var content2 = response2.Content.ReadAsStringAsync().Result;
+                    if (string.IsNullOrEmpty(content2))
+                    {
+                        ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                        return View();
+                    }
+                    art = JsonSerializer.Deserialize<List<DTOArticulo>>(content2, _jsonOptions);
+
+                }
+                List<DTOMovimientoTipo> tip = null;
+                if (response3.IsSuccessStatusCode)
+                {
+                    var content3 = response3.Content.ReadAsStringAsync().Result;
+                    if (string.IsNullOrEmpty(content3))
+                    {
+                        ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                        return View();
+                    }
+                    tip = JsonSerializer.Deserialize<List<DTOMovimientoTipo>>(content3, _jsonOptions);
+
+                }
+
+                DTOListadoArticuloTipoDescendente nuevo = new DTOListadoArticuloTipoDescendente()
+                {
+                    movimientos = mov,
+                    articulos = art,
+                    tipos = tip,
+                    idArticulo = (int)idArticulo,
+                    idTipo = (int)idTipo,
+                    pagina = (int)pagina
+                };
+                return View(nuevo);
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return View();
+            }
         }
+
+
 
 
         // GET: MovimientoStockController/ListadoAnualesPorTipo
@@ -275,6 +368,10 @@ namespace MVC_2_P3.Controllers
             
             return View(mov);
         }
+
+
+
+
 
         private void SetError(HttpResponseMessage respuesta)
         {

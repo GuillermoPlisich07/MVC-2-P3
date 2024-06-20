@@ -8,6 +8,5 @@
         public int idArticulo { get; set; }
         public int idTipo { get; set;}
         public int pagina { get; set; }
-
     }
 }
