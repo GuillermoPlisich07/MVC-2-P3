@@ -3,10 +3,9 @@
     public class DTOMovimientoStock
     {
         public int id { get; set; }
-        public List<DTOArticulo> articulos { get; set; }
-        public int idArticulo { get; set; }
-        public List<DTOMovimientoTipo> tipos { get; set; }
-        public int idMovimientoTipo { get; set; }
+        public DateTime fechaDeMovimiento { get; set; }
+        public DTOArticulo articulo { get; set; }
+        public DTOMovimientoTipo tipo { get; set; }
         public string email { get; set; }
         public int cantidadMovidas { get; set; }
     }

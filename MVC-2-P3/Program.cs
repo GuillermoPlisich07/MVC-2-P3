@@ -8,6 +8,12 @@ namespace MVC_2_P3
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            
+            // HttpClient
+            builder.Services.AddHttpClient();
+            
+            //Session
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -18,13 +24,14 @@ namespace MVC_2_P3
             }
             app.UseStaticFiles();
 
+            app.UseHttpsRedirection();
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Usuario}/{action=Login}");
 
             app.Run();
         }
