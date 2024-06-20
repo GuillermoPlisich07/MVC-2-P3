@@ -155,8 +155,9 @@ namespace MVC_2_P3.Controllers
                 {
                     return RedirectToAction("Usuario", "Login");
                 }
+
                 List<DTOMovimientoStock> mov = null;
-                if (inicio != null && final != null && idArticulos != null)
+                if (idArticulos.Count()>0)
                 {
                     pagina = 1;
                     //Inserto el token al Autorizacion para la consulta
@@ -200,12 +201,15 @@ namespace MVC_2_P3.Controllers
                     art = JsonSerializer.Deserialize<List<DTOArticulo>>(content2, _jsonOptions);
 
                 }
-
+                
                 DTOListadoArticuloRangoPorFecha nuevo = new DTOListadoArticuloRangoPorFecha()
                 {
                     movimientos = mov,
+                    inicio = inicio,
+                    final = final,
                     articulos = art,
-                    pagina = 0
+                    idArticulos = idArticulos,
+                    pagina = pagina
                 };
                 return View(nuevo);
             }
