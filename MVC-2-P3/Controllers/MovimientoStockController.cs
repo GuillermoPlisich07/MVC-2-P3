@@ -142,19 +142,139 @@ namespace MVC_2_P3.Controllers
         // GET: MovimientoStockController/ListadoArticuloRangoPorFecha
         public ActionResult ListadoArticuloRangoPorFecha()
         {
-            List<DTOMovimientoStock> temas = null;
-            return View(temas);
+            var response1 = _httpClient.GetAsync("Articulo").Result;
+
+            if (response1.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("Usuario", "Login");
+            }
+
+            List<DTOArticulo> art = null;
+            if (response1.IsSuccessStatusCode)
+            {
+                var content1 = response1.Content.ReadAsStringAsync().Result;
+                if (string.IsNullOrEmpty(content1))
+                {
+                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                    return View();
+                }
+                art = JsonSerializer.Deserialize<List<DTOArticulo>>(content1, _jsonOptions);
+
+            }
+
+            List<DTOMovimientoStock> mov = null;
+
+            DTOListadoArticuloRangoPorFecha nuevo = new DTOListadoArticuloRangoPorFecha()
+            {
+                movimientos = mov,
+                articulos = art,
+            };
+            return View(nuevo);
         }
 
         // POST: MovimientoStockController/ListadoArticuloRangoPorFecha
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ListadoArticuloRangoPorFecha()
+        public ActionResult ListadoArticuloRangoPorFecha(DateTime? inicio, DateTime? final, List<int> idArticulos, int pagina)
         {
-
+            return null;
         }
 
 
+        // GET: MovimientoStockController/ListadoArticuloTipoDescendente
+        public ActionResult ListadoArticuloTipoDescendente()
+        {
+            var response1 = _httpClient.GetAsync("Articulo").Result;
+            var response2 = _httpClient.GetAsync("MovimientoTipo").Result;
+
+            if (response1.StatusCode == System.Net.HttpStatusCode.Unauthorized || response2.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("Usuario", "Login");
+            }
+
+            List<DTOArticulo> art = null;
+            if (response1.IsSuccessStatusCode)
+            {
+                var content1 = response1.Content.ReadAsStringAsync().Result;
+                if (string.IsNullOrEmpty(content1))
+                {
+                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                    return View();
+                }
+                art = JsonSerializer.Deserialize<List<DTOArticulo>>(content1, _jsonOptions);
+
+            }
+            List<DTOMovimientoTipo> tip = null;
+            if (response2.IsSuccessStatusCode)
+            {
+                var content2 = response2.Content.ReadAsStringAsync().Result;
+                if (string.IsNullOrEmpty(content2))
+                {
+                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                    return View();
+                }
+                tip = JsonSerializer.Deserialize<List<DTOMovimientoTipo>>(content2, _jsonOptions);
+
+            }
+
+            List<DTOMovimientoStock> mov = null;
+
+            DTOListadoArticuloRangoPorFecha nuevo = new DTOListadoArticuloRangoPorFecha()
+            {
+                movimientos = mov,
+                articulos = art,
+            };
+            return View(nuevo);
+
+        }
+
+        // POST: MovimientoStockController/ListadoArticuloTipoDescendente
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ListadoArticuloTipoDescendente(int idArticulo, int idTipo, int pagina)
+        {
+            return null;
+        }
+
+
+        // GET: MovimientoStockController/ListadoAnualesPorTipo
+        public ActionResult ListadoAnualesPorTipo()
+        {
+            //Pregunto el Token que esta cargado en el session
+            var token = HttpContext.Session.GetString("Token");
+
+            //En el caso de que sea nulo, se tiene que loguear devuelta
+            if ((token == null))
+            {
+                return RedirectToAction("Usuario", "Login");
+            }
+
+            //Inserto el token al Autorizacion para la consulta
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
+
+
+            var response = _httpClient.GetAsync("MovimientoStock/ListadoAnualesPorTipo").Result;
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                return RedirectToAction("Usuario", "Login");
+            }
+
+            List<DTOResumenAnio> mov = null;
+            if (response.IsSuccessStatusCode)
+            {
+                var content = response.Content.ReadAsStringAsync().Result;
+                if (string.IsNullOrEmpty(content))
+                {
+                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                    return View();
+                }
+                mov = JsonSerializer.Deserialize<List<DTOResumenAnio>>(content, _jsonOptions);
+
+            }
+            
+            return View(mov);
+        }
 
         private void SetError(HttpResponseMessage respuesta)
         {

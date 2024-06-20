@@ -1,0 +1,39 @@
+﻿@model IEnumerable<MVC_2_P3.DTOs.DTOResumenAnio>
+
+@{
+    ViewData["Title"] = "ListadoAnualesPorTipo";
+}
+
+<h1>Listado Anual Por Tipo</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.anio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.tipo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.cantMovidas)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.anio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.tipo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.cantMovidas)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
