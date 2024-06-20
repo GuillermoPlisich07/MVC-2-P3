@@ -141,100 +141,105 @@ namespace MVC_2_P3.Controllers
 
 
 
+        
         // GET: MovimientoStockController/ListadoArticuloRangoPorFecha
-        public ActionResult ListadoArticuloRangoPorFecha()
+        public ActionResult ListadoArticuloRangoPorFecha(DateTime inicio, DateTime final, List<int> idArticulos, int pagina)
         {
-            var response1 = _httpClient.GetAsync("Articulo").Result;
-
-            if (response1.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            try
             {
-                return RedirectToAction("Usuario", "Login");
-            }
+                //Pregunto el Token que esta cargado en el session
+                var token = HttpContext.Session.GetString("Token");
 
-            List<DTOArticulo> art = null;
-            if (response1.IsSuccessStatusCode)
-            {
-                var content1 = response1.Content.ReadAsStringAsync().Result;
-                if (string.IsNullOrEmpty(content1))
+                //En el caso de que sea nulo, se tiene que loguear devuelta
+                if ((token == null))
                 {
-                    ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-                    return View();
+                    return RedirectToAction("Usuario", "Login");
                 }
-                art = JsonSerializer.Deserialize<List<DTOArticulo>>(content1, _jsonOptions);
+                List<DTOMovimientoStock> mov = null;
+                if (inicio != null && final != null && idArticulos != null)
+                {
+                    pagina = 1;
+                    //Inserto el token al Autorizacion para la consulta
+                    _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
+                    var response1 = _httpClient.GetAsync($"MovimientoStock/ListadoArticuloRangoPorFecha/{inicio}/{final}/{idArticulos}/{pagina}").Result;
 
+                    // Opcional: Loguear el contenido de la respuesta para depuración
+                    var responseContent = response1.Content.ReadAsStringAsync().Result;
+                    System.Diagnostics.Debug.WriteLine("Respuesta: " + responseContent);
+
+                    if (response1.IsSuccessStatusCode)
+                    {
+                        var content1 = response1.Content.ReadAsStringAsync().Result;
+                        if (string.IsNullOrEmpty(content1))
+                        {
+                            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                            return View();
+                        }
+                        mov = JsonSerializer.Deserialize<List<DTOMovimientoStock>>(content1, _jsonOptions);
+
+                    }
+                }
+
+
+                var response2 = _httpClient.GetAsync("Articulo").Result;
+
+                if (response2.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    return RedirectToAction("Usuario", "Login");
+                }
+
+                List<DTOArticulo> art = null;
+                if (response2.IsSuccessStatusCode)
+                {
+                    var content2 = response2.Content.ReadAsStringAsync().Result;
+                    if (string.IsNullOrEmpty(content2))
+                    {
+                        ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
+                        return View();
+                    }
+                    art = JsonSerializer.Deserialize<List<DTOArticulo>>(content2, _jsonOptions);
+
+                }
+
+                DTOListadoArticuloRangoPorFecha nuevo = new DTOListadoArticuloRangoPorFecha()
+                {
+                    movimientos = mov,
+                    articulos = art,
+                    pagina = 0
+                };
+                return View(nuevo);
             }
-
-            List<DTOMovimientoStock> mov = null;
-
-            DTOListadoArticuloRangoPorFecha nuevo = new DTOListadoArticuloRangoPorFecha()
+            catch(Exception ex)
             {
-                movimientos = mov,
-                articulos = art,
-            };
-            return View(nuevo);
+                ViewBag.Error = ex.Message;
+                return View();
+            }
         }
 
-        // POST: MovimientoStockController/ListadoArticuloRangoPorFecha
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult ListadoArticuloRangoPorFecha(DateTime? inicio, DateTime? final, List<int> idArticulos, int pagina)
-        {
-            return null;
-        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 
         // GET: MovimientoStockController/ListadoArticuloTipoDescendente
-        //public ActionResult ListadoArticuloTipoDescendente()
-        //{
-        //    var response1 = _httpClient.GetAsync("Articulo").Result;
-        //    var response2 = _httpClient.GetAsync("MovimientoTipo").Result;
-
-        //    if (response1.StatusCode == System.Net.HttpStatusCode.Unauthorized || response2.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-        //    {
-        //        return RedirectToAction("Usuario", "Login");
-        //    }
-
-        //    List<DTOArticulo> art = null;
-        //    if (response1.IsSuccessStatusCode)
-        //    {
-        //        var content1 = response1.Content.ReadAsStringAsync().Result;
-        //        if (string.IsNullOrEmpty(content1))
-        //        {
-        //            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-        //            return View();
-        //        }
-        //        art = JsonSerializer.Deserialize<List<DTOArticulo>>(content1, _jsonOptions);
-
-        //    }
-        //    List<DTOMovimientoTipo> tip = null;
-        //    if (response2.IsSuccessStatusCode)
-        //    {
-        //        var content2 = response2.Content.ReadAsStringAsync().Result;
-        //        if (string.IsNullOrEmpty(content2))
-        //        {
-        //            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-        //            return View();
-        //        }
-        //        tip = JsonSerializer.Deserialize<List<DTOMovimientoTipo>>(content2, _jsonOptions);
-
-        //    }
-
-        //    List<DTOMovimientoStock> mov = null;
-
-        //    DTOListadoArticuloTipoDescendente nuevo = new DTOListadoArticuloTipoDescendente()
-        //    {
-        //        movimientos = mov,
-        //        articulos = art,
-        //        tipos = tip
-        //    };
-        //    return View(nuevo);
-
-        //}
-
-        // POST: MovimientoStockController/ListadoArticuloTipoDescendente
         public ActionResult ListadoArticuloTipoDescendente(int idArticulo, int idTipo, int pagina)
         {
             if (idArticulo == null && idTipo == null && pagina == null)
@@ -259,9 +264,12 @@ namespace MVC_2_P3.Controllers
                     pagina = 1;
                     //Inserto el token al Autorizacion para la consulta
                     _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
-                    var response1 = _httpClient.GetAsync("MovimientoStock/ListadoArticuloTipoDescendente/" + idArticulo + "/" + idTipo + "/" + pagina).Result;
+                    var response1 = _httpClient.GetAsync($"MovimientoStock/ListadoArticuloTipoDescendente/{idArticulo}/{idTipo}/{pagina}").Result;
 
-                    
+                    // Opcional: Loguear el contenido de la respuesta para depuración
+                    var responseContent = response1.Content.ReadAsStringAsync().Result;
+                    System.Diagnostics.Debug.WriteLine("Respuesta: " + responseContent);
+
                     if (response1.IsSuccessStatusCode)
                     {
                         var content1 = response1.Content.ReadAsStringAsync().Result;
@@ -328,8 +336,6 @@ namespace MVC_2_P3.Controllers
         }
 
 
-
-
         // GET: MovimientoStockController/ListadoAnualesPorTipo
         public ActionResult ListadoAnualesPorTipo()
         {
@@ -368,9 +374,6 @@ namespace MVC_2_P3.Controllers
             
             return View(mov);
         }
-
-
-
 
 
         private void SetError(HttpResponseMessage respuesta)

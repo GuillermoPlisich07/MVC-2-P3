@@ -83,8 +83,23 @@
             }
         </tbody>
     </table>
+    <div class="d-flex justify-content-between">
+        @if (Model.movimientos.Any())
+        {
+            <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloTipoDescendente" asp-route-inicio="@Model.inicio" asp-route-fin="@Model.final" asp-route-pagina="@(Model.pagina + 1)">Siguiente</a>
+        }
+    </div>
+
 }
 else
 {
-    <h3>No hay datos disponibles</h3>
+    <div class="alert alert-info">
+        <p>No hay movimientos para mostrar</p>
+        @if (Model.inicio != null && Model.final != null)
+        {
+            <p>
+                <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloRangoPorFecha" asp-route-inicio="@Model.inicio" asp-route-fin="@Model.final" asp-route-pagina="1">Volver al primero</a>
+            </p>
+        }
+    </div>
 }
