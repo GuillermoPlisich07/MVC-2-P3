@@ -139,10 +139,6 @@ namespace MVC_2_P3.Controllers
             }
         }
 
-
-
-
-        
         // GET: MovimientoStockController/ListadoArticuloRangoPorFecha
         public ActionResult ListadoArticuloRangoPorFecha(DateTime inicio, DateTime final, List<int> idArticulos, int pagina)
         {
@@ -160,7 +156,10 @@ namespace MVC_2_P3.Controllers
                 List<DTOMovimientoStock> mov = null;
                 if (idArticulos.Count()>0)
                 {
-                    pagina = 1;
+                    if (pagina==0)
+                    {
+                        pagina = 1;
+                    }
                     //Inserto el token al Autorizacion para la consulta
                     _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
                     // Construir la URL con parámetros de consulta
@@ -179,19 +178,14 @@ namespace MVC_2_P3.Controllers
 
                     var response1 = _httpClient.GetAsync(url).Result;
 
-                    // Opcional: Loguear el contenido de la respuesta para depuración
-                    var responseContent = response1.Content.ReadAsStringAsync().Result;
-                    System.Diagnostics.Debug.WriteLine("Respuesta: " + responseContent);
-
                     if (response1.IsSuccessStatusCode)
                     {
                         var content1 = response1.Content.ReadAsStringAsync().Result;
-                        if (string.IsNullOrEmpty(content1))
+                        if (!string.IsNullOrEmpty(content1))
                         {
-                            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-                            return View();
+                            mov = JsonSerializer.Deserialize<List<DTOMovimientoStock>>(content1, _jsonOptions);
                         }
-                        mov = JsonSerializer.Deserialize<List<DTOMovimientoStock>>(content1, _jsonOptions);
+                        
 
                     }
                 }
@@ -235,29 +229,6 @@ namespace MVC_2_P3.Controllers
             }
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // GET: MovimientoStockController/ListadoArticuloTipoDescendente
         public ActionResult ListadoArticuloTipoDescendente(int idArticulo, int idTipo, int pagina)
         {
@@ -280,7 +251,10 @@ namespace MVC_2_P3.Controllers
                 List<DTOMovimientoStock> mov = null;
                 if (idArticulo != 0 && idTipo != 0)
                 {
-                    pagina = 1;
+                    if (pagina==0)
+                    {
+                        pagina = 1;
+                    }
                     //Inserto el token al Autorizacion para la consulta
                     _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue($"Bearer", token);
                     var response1 = _httpClient.GetAsync($"MovimientoStock/ListadoArticuloTipoDescendente/{idArticulo}/{idTipo}/{pagina}").Result;
@@ -292,13 +266,11 @@ namespace MVC_2_P3.Controllers
                     if (response1.IsSuccessStatusCode)
                     {
                         var content1 = response1.Content.ReadAsStringAsync().Result;
-                        if (string.IsNullOrEmpty(content1))
+                        if (!string.IsNullOrEmpty(content1))
                         {
-                            ViewBag.Mensaje = "Ocurrio un error inesperado al cargar Movimiento Stock.";
-                            return View();
+                            mov = JsonSerializer.Deserialize<List<DTOMovimientoStock>>(content1, _jsonOptions);
                         }
-                        mov = JsonSerializer.Deserialize<List<DTOMovimientoStock>>(content1, _jsonOptions);
-
+                   
                     }
                 }
 

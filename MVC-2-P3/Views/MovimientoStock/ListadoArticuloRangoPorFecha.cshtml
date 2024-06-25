@@ -86,7 +86,7 @@
     <div class="d-flex justify-content-between">
         @if (Model.movimientos.Any())
         {
-            <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloTipoDescendente" asp-route-idArticulos="@string.Join(",", Model.idArticulos)" asp-route-inicio="@Model.inicio" asp-route-fin="@Model.final" asp-route-pagina="@(Model.pagina + 1)">Siguiente</a>
+            <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloRangoPorFecha" asp-route-idArticulos="@string.Join(",", Model.idArticulos)" asp-route-inicio="@Model.inicio" asp-route-final="@Model.final" asp-route-pagina="@(Model.pagina+ 1)">Siguiente</a>
         }
     </div>
 
@@ -95,7 +95,7 @@ else
 {
     <div class="alert alert-info">
         <p>No hay movimientos para mostrar</p>
-        @if (Model.inicio != null && Model.final != null)
+        @if (Model.idArticulos.Count>0)
         {
             <p>
                 <a class="btn btn-secondary" asp-controller="MovimientoStock" asp-action="ListadoArticuloRangoPorFecha" asp-route-idArticulos="@string.Join(",", Model.idArticulos)" asp-route-inicio="@Model.inicio" asp-route-fin="@Model.final" asp-route-pagina="1">Volver al primero</a>
